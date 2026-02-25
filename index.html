@@ -1,0 +1,564 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Хунафа — Исламский портал. Коран с переводом, азан по геолокации, изучение религии." />
+  <title>Хунафа — Исламский портал</title>
+  <link rel="icon" type="image/png" href="photo.png" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Sans:wght@300;400;500&family=Amiri:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+
+  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="namaz.css" />
+  <link rel="stylesheet" href="quran.css" />
+
+  <style>
+    /* ---- СЕКЦИЯ «ИЗУЧИТЬ РЕЛИГИЮ» ---- */
+    #learn {
+      background: var(--bg2);
+      position: relative; overflow: hidden;
+    }
+    #learn::before {
+      content: '';
+      position: absolute; inset: 0;
+      background: radial-gradient(ellipse 55% 70% at 85% 50%, rgba(138,104,48,0.06) 0%, transparent 65%);
+      pointer-events: none;
+    }
+
+    .learn-grid {
+      display: grid;
+      grid-template-columns: 1fr 380px;
+      gap: 48px; align-items: center;
+    }
+
+    .learn-features {
+      display: flex; flex-direction: column; gap: 16px; margin: 28px 0 36px;
+    }
+    .learn-feature {
+      display: flex; gap: 14px; align-items: flex-start;
+    }
+    .learn-feature-icon {
+      width: 36px; height: 36px;
+      background: var(--gold-bg); border: 1px solid rgba(138,104,48,0.2);
+      border-radius: var(--radius-sm);
+      display: flex; align-items: center; justify-content: center;
+      color: var(--gold); font-size: 0.88rem; flex-shrink: 0; margin-top: 2px;
+    }
+    .learn-feature-text strong { display: block; font-size: 0.88rem; font-weight: 500; color: var(--text); margin-bottom: 1px; }
+    .learn-feature-text span   { font-size: 0.8rem; color: var(--text-muted); }
+
+    .learn-cta {
+      display: inline-flex; align-items: center; gap: 11px;
+      background: var(--text); color: #fff;
+      font-family: var(--font-body); font-size: 0.95rem; font-weight: 500;
+      padding: 16px 36px; border-radius: 100px;
+      letter-spacing: 0.04em; transition: all var(--transition);
+      border: none; cursor: pointer;
+    }
+    .learn-cta:hover { background: var(--gold); transform: translateY(-2px); box-shadow: 0 10px 32px rgba(138,104,48,0.22); }
+    .learn-cta i { font-size: 1.05rem; }
+
+    /* Карточка-превью канала */
+    .tg-preview-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 32px 28px;
+      box-shadow: var(--shadow-card);
+      position: relative; overflow: hidden;
+    }
+    .tg-preview-card::before {
+      content: '';
+      position: absolute; top: 0; left: 0; right: 0; height: 3px;
+      background: linear-gradient(90deg, var(--gold-dark), var(--gold));
+    }
+
+    .tg-card-header {
+      display: flex; align-items: center; gap: 14px; margin-bottom: 20px;
+    }
+    .tg-avatar {
+      overflow: hidden;
+      width: 52px; height: 52px; border-radius: 50%;
+      background: var(--gold-bg); border: 2px solid rgba(138,104,48,0.2);
+      display: flex; align-items: center; justify-content: center;
+      font-family: var(--font-arabic); font-size: 1.3rem; color: var(--gold);
+      flex-shrink: 0;
+    }
+    .tg-avatar img { width: 100%; height: 100%; object-fit: cover; border-radius: 50%; display: block; }
+    .tg-name { font-weight: 500; font-size: 1rem; color: var(--text); }
+    .tg-handle { font-size: 0.78rem; color: var(--text-muted); margin-top: 2px; }
+
+    .tg-verified {
+      display: inline-flex; align-items: center; gap: 5px;
+      font-size: 0.72rem; color: #229ED9; margin-bottom: 14px;
+    }
+
+    .tg-post-preview {
+      display: block;
+      font-size: 0.86rem; color: var(--text-dim);
+      line-height: 1.65;
+      padding: 14px 16px;
+      background: var(--bg2); border-radius: var(--radius-sm);
+      border-left: 3px solid var(--gold);
+      transition: all var(--transition);
+    }
+    .tg-posts-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+    .tg-post-link:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 8px 18px rgba(0,0,0,0.08);
+      border-left-color: var(--gold-dark);
+    }
+    .tg-post-preview.is-loading {
+      opacity: 0.75;
+      font-style: italic;
+    }
+    .tg-post-meta {
+      display: block;
+      margin-top: 8px;
+      font-size: 0.76rem;
+      color: var(--text-muted);
+    }
+
+    .tg-join-btn {
+      display: flex; align-items: center; justify-content: center; gap: 9px;
+      background: #229ED9; color: #fff;
+      font-family: var(--font-body); font-size: 0.88rem; font-weight: 500;
+      padding: 12px; border-radius: var(--radius-md);
+      width: 100%; letter-spacing: 0.03em;
+      transition: all var(--transition);
+    }
+    .tg-join-btn:hover { background: #1a8bc2; transform: translateY(-1px); }
+
+    /* Stats */
+    .stats-row {
+      display: grid; grid-template-columns: repeat(3, 1fr);
+      gap: 18px; margin-top: 72px; padding-top: 56px;
+      border-top: 1px solid var(--border);
+    }
+    .stat-card {
+      text-align: center; padding: 30px 18px;
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: var(--radius-lg); box-shadow: var(--shadow-card);
+    }
+    .stat-num {
+      font-family: var(--font-display); font-weight: 600;
+      font-size: 2.6rem; color: var(--gold); line-height: 1; margin-bottom: 8px;
+    }
+    .stat-label { font-size: 0.78rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.1em; }
+
+    @media (max-width: 860px) {
+      .learn-grid { grid-template-columns: 1fr; }
+      .tg-preview-card { max-width: 420px; }
+      .stats-row { grid-template-columns: 1fr 1fr; }
+    }
+    @media (max-width: 480px) {
+      .stats-row { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ========== НАВИГАЦИЯ ========== -->
+<nav id="navbar">
+  <a href="#hero" class="nav-logo">
+    <img src="photo.png" alt="Хунафа" class="nav-logo-img" />
+  </a>
+  <ul class="nav-links">
+    <li><a href="#hero">Главная</a></li>
+    <li><a href="#azan">Азан</a></li>
+    <li><a href="#quran">Коран</a></li>
+    <li><a href="#learn">Обучение</a></li>
+  </ul>
+  <a href="https://t.me/hunafa111" target="_blank" rel="noopener" class="nav-cta">
+    <i class="fa-brands fa-telegram"></i>
+    Изучить религию
+  </a>
+</nav>
+
+<!-- ========== ГЕРОЙ ========== -->
+<section id="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-ornament"></div>
+
+  <div class="hero-inner">
+    <div class="hero-logo-wrap">
+      <img src="photo.png" alt="Хунафа" class="hero-logo-img" />
+    </div>
+    <div class="hero-bismillah">بِسۡمِ ٱللَّهِ ٱلرَّحۡمَٰنِ ٱلرَّحِيمِ</div>
+    <h1 class="hero-title">Путь<br><em>Единобожия</em></h1>
+    <p class="hero-desc">
+      Коран с русским переводом, точный азан по вашей геолокации
+      и глубокое изучение Ислама — всё в одном месте.
+    </p>
+    <div class="hero-actions">
+      <a href="#azan" class="btn-primary">
+        <i class="fa-solid fa-moon"></i>
+        Времена азана
+      </a>
+      <a href="#quran" class="btn-secondary">
+        <i class="fa-solid fa-book-open"></i>
+        Читать Коран
+      </a>
+    </div>
+  </div>
+
+  <div class="hero-scroll">
+    <div class="hero-scroll-line"></div>
+    <span>Листать</span>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ========== АЗАН — ВРЕМЕНА НАМАЗА ========== -->
+<section id="azan" class="section-pad">
+  <div class="container">
+
+    <div class="section-header">
+      <div class="section-tag">Расписание намазов</div>
+      <h2 class="section-title">Азан</h2>
+      <p class="section-sub">
+        Точные времена пяти намазов по вашему местоположению.
+        Расчёт по методу Мусульманской Мировой Лиги.
+      </p>
+    </div>
+
+    <!-- Строка локации -->
+    <div class="azan-location-bar">
+      <div class="location-info">
+        <div class="location-icon">
+          <i class="fa-solid fa-location-dot"></i>
+        </div>
+        <div class="location-text">
+          <strong id="location-name">Определение местоположения…</strong>
+          <span id="location-sub">Пожалуйста, разрешите доступ к геолокации</span>
+        </div>
+      </div>
+      <button class="location-btn" id="azan-loc-btn">
+        <i class="fa-solid fa-rotate-right"></i>
+        Обновить
+      </button>
+    </div>
+
+    <!-- Дата -->
+    <div class="azan-date-strip" id="azan-date-strip">
+      <div class="azan-gregorian">Загрузка даты…</div>
+    </div>
+
+    <!-- 5 карточек намазов -->
+    <div class="prayer-grid" id="prayer-grid">
+      <div class="azan-loading" style="grid-column:1/-1">
+        <i class="fa-solid fa-circle-notch fa-spin"></i>
+        <p>Определяем ваше местоположение…</p>
+      </div>
+    </div>
+
+    <!-- Обратный отсчёт -->
+    <div class="azan-countdown" id="azan-countdown" style="opacity:0.4">
+      <div>
+        <div class="countdown-label">До следующего намаза</div>
+        <div class="countdown-name">—</div>
+      </div>
+      <div class="countdown-progress-wrap">
+        <div class="countdown-progress-track">
+          <div class="countdown-progress-fill" style="width:0%"></div>
+        </div>
+      </div>
+      <div class="countdown-timer">--:--:--</div>
+    </div>
+
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ========== КОРАН ========== -->
+<section id="quran" class="section-pad">
+  <div class="container">
+
+    <div class="section-header">
+      <div class="section-tag">Священная книга</div>
+      <h2 class="section-title">Коран</h2>
+      <p class="section-sub">114 сур с арабским текстом и переводом на русский язык.</p>
+    </div>
+
+    <div class="quran-layout">
+      <aside class="quran-sidebar">
+        <div class="quran-search-wrap">
+          <i class="fa-solid fa-magnifying-glass"></i>
+          <input
+            type="search"
+            id="quran-search"
+            class="quran-search"
+            placeholder="Поиск суры…"
+            autocomplete="off"
+          />
+        </div>
+        <div class="surah-list" id="surah-list">
+          <div style="padding:20px;text-align:center;color:var(--text-muted);font-size:0.83rem;">
+            <i class="fa-solid fa-circle-notch fa-spin"></i>
+            <p style="margin-top:8px">Загрузка…</p>
+          </div>
+        </div>
+      </aside>
+
+      <main id="quran-reader">
+        <div class="quran-placeholder">
+          <i class="fa-solid fa-book-quran"></i>
+          <p>Выберите суру для чтения</p>
+        </div>
+      </main>
+    </div>
+
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ========== ИЗУЧИТЬ РЕЛИГИЮ ========== -->
+<section id="learn" class="section-pad">
+  <div class="container">
+
+    <div class="learn-grid">
+      <!-- Левая часть: текст -->
+      <div>
+        <div class="section-tag">Telegram-канал</div>
+        <h2 class="section-title">Изучить<br><em style="font-style:italic;color:var(--gold)">религию</em></h2>
+
+                <div class="learn-features">
+          <div class="learn-feature">
+            <div class="learn-feature-icon"><i class="fa-solid fa-book"></i></div>
+            <div class="learn-feature-text">
+              <strong>Достоверные Хадисы</strong>
+              <span></span>
+            </div>
+          </div>
+          <div class="learn-feature">
+            <div class="learn-feature-icon"><i class="fa-solid fa-users"></i></div>
+            <div class="learn-feature-text">
+              <strong>Истории Сподвижников</strong>
+              <span></span>
+            </div>
+          </div>
+          <div class="learn-feature">
+            <div class="learn-feature-icon"><i class="fa-solid fa-scroll"></i></div>
+            <div class="learn-feature-text">
+              <strong>Аяты из Корана</strong>
+              <span></span>
+            </div>
+          </div>
+          <div class="learn-feature">
+            <div class="learn-feature-icon"><i class="fa-solid fa-bell"></i></div>
+            <div class="learn-feature-text">
+              <strong>Напоминание себе и вам</strong>
+              <span></span>
+            </div>
+          </div>
+        </div>
+
+        <a href="https://t.me/hunafa111" target="_blank" rel="noopener" class="learn-cta">
+          <i class="fa-brands fa-telegram"></i>
+          Перейти в канал Хунафа
+        </a>
+      </div>
+
+      <!-- Правая часть: превью канала -->
+      <div class="tg-preview-card">
+        <div class="tg-card-header">
+          <div class="tg-avatar"><img src="photo.png" alt="Хунафа" /></div>
+          <div>
+            <div class="tg-name">Хунафа</div>
+            <div class="tg-handle">@hunafa111</div>
+          </div>
+        </div>
+
+        <div class="tg-verified">
+          <i class="fa-brands fa-telegram"></i>
+          Telegram-канал
+        </div>
+
+        <div id="tg-posts" class="tg-posts-list">
+          <div class="tg-post-preview is-loading">
+            Загружаем последние посты канала…
+          </div>
+        </div>
+
+        <a href="https://t.me/hunafa111" target="_blank" rel="noopener" class="tg-join-btn">
+          <i class="fa-brands fa-telegram"></i>
+          Подписаться на канал
+        </a>
+      </div>
+    </div>
+
+    <!-- Статистика -->
+    <div class="stats-row">
+      <div class="stat-card">
+        <div class="stat-num">114</div>
+        <div class="stat-label">Сур в Коране</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-num">5</div>
+        <div class="stat-label">Намазов в день</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-num">5</div>
+        <div class="stat-label">Столпов Ислама</div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ========== ФУТЕР ========== -->
+<footer>
+  <div class="container">
+    <div class="footer-logo">
+      <img src="photo.png" alt="Хунафа" style="height:52px;width:auto;object-fit:contain;padding:6px;border:1px solid var(--border2);border-radius:14px;background:var(--bg2);box-shadow:var(--shadow-card);" />
+    </div>
+    <p class="footer-quote">
+      «Воистину, Аллах наставляет на прямой путь, кого пожелает»
+    </p>
+    <ul class="footer-links">
+      <li><a href="#azan">Азан</a></li>
+      <li><a href="#quran">Коран</a></li>
+      <li><a href="#learn">Обучение</a></li>
+      <li><a href="https://t.me/hunafa111" target="_blank" rel="noopener">Telegram</a></li>
+    </ul>
+    <div class="footer-bottom">
+      &copy; 2026 Хунафа · Да примет Аллах наши деяния
+    </div>
+  </div>
+</footer>
+
+<!-- ========== СКРИПТЫ ========== -->
+<script src="namaz.js"></script>
+<script src="quran_ru.js"></script>
+<script src="quran.js"></script>
+
+<script>
+  /* Активная ссылка навбара при скролле */
+  const navSections = ['hero','azan','quran','learn'];
+  const navLinks = document.querySelectorAll('.nav-links a');
+
+  const sectionObserver = new IntersectionObserver(entries => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        navLinks.forEach(l => l.classList.remove('active'));
+        const link = document.querySelector(`.nav-links a[href="#${entry.target.id}"]`);
+        if (link) link.classList.add('active');
+      }
+    });
+  }, { threshold: 0.35 });
+
+  navSections.forEach(id => {
+    const el = document.getElementById(id);
+    if (el) sectionObserver.observe(el);
+  });
+
+  /* Тень навбара при скролле */
+  window.addEventListener('scroll', () => {
+    document.getElementById('navbar')?.classList.toggle('scrolled', window.scrollY > 10);
+  });
+
+  /* Анимация появления карточек при скролле */
+  const revealObserver = new IntersectionObserver(entries => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.style.opacity = '1';
+        entry.target.style.transform = 'translateY(0)';
+      }
+    });
+  }, { threshold: 0.08 });
+
+
+  function cleanTelegramText(input) {
+    const div = document.createElement('div');
+    div.innerHTML = input || '';
+    return (div.textContent || div.innerText || '')
+      .replace(/\s+/g, ' ')
+      .trim();
+  }
+
+  function renderTelegramPosts(items) {
+    const wrap = document.getElementById('tg-posts');
+    if (!wrap) return;
+
+    if (!Array.isArray(items) || items.length === 0) {
+      wrap.innerHTML = `
+        <a class="tg-post-preview tg-post-link" href="https://t.me/hunafa111" target="_blank" rel="noopener">
+          <div>Сказал Ибн ‘Усеймин: «Тот, кто слушает Коран, подобен в награде тому, кто читает его».</div>
+          <span class="tg-post-meta">"Шарх аль-Арбаин ан-Нававия" (394)</span>
+        </a>
+`;
+      return;
+    }
+
+    const pinnedPostHtml = `<a class="tg-post-preview tg-post-link" href="https://t.me/hunafa111" target="_blank" rel="noopener">
+          <div>Сказал Ибн ‘Усеймин: «Тот, кто слушает Коран, подобен в награде тому, кто читает его».</div>
+          <span class="tg-post-meta">"Шарх аль-Арбаин ан-Нававия" (394)</span>
+        </a>`;
+
+    wrap.innerHTML = [pinnedPostHtml, ...items.slice(0, 2).map((item) => {
+      const text = cleanTelegramText(item.description || item.content || item.title || '');
+      const shortText = text.length > 220 ? `${text.slice(0, 217)}...` : text;
+      const link = item.link || 'https://t.me/hunafa111';
+      const dt = item.pubDate ? new Date(item.pubDate) : null;
+      const dateLabel = dt && !Number.isNaN(dt.getTime())
+        ? dt.toLocaleDateString('ru-RU', { day: '2-digit', month: 'long' })
+        : '';
+
+      return `
+        <a class="tg-post-preview tg-post-link" href="${link}" target="_blank" rel="noopener">
+          <div>${shortText || 'Открыть пост в Telegram'}</div>
+          <span class="tg-post-meta">${dateLabel ? `${dateLabel} · ` : ''}Открыть пост</span>
+        </a>
+      `;
+    })].join('');
+  }
+
+  async function fetchTelegramPosts() {
+    const rssUrl = encodeURIComponent('https://rsshub.app/telegram/channel/hunafa111');
+    const sources = [
+      `https://api.rss2json.com/v1/api.json?rss_url=${rssUrl}`,
+      `https://api.rss2json.com/v1/api.json?rss_url=${rssUrl}&count=5`,
+    ];
+
+    for (const url of sources) {
+      try {
+        const res = await fetch(url, { cache: 'no-store' });
+        if (!res.ok) continue;
+        const data = await res.json();
+        if (Array.isArray(data.items) && data.items.length) {
+          renderTelegramPosts(data.items);
+          return;
+        }
+      } catch (_) {
+        // try next source
+      }
+    }
+
+    renderTelegramPosts([]);
+  }
+
+  fetchTelegramPosts();
+
+  document.querySelectorAll('.stat-card, .learn-feature, .tg-preview-card').forEach(el => {
+    el.style.opacity = '0';
+    el.style.transform = 'translateY(18px)';
+    el.style.transition = 'opacity 0.55s ease, transform 0.55s ease';
+    revealObserver.observe(el);
+  });
+</script>
+</body>
+</html>
